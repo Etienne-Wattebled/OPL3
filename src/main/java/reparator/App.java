@@ -8,8 +8,15 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import spoon.Launcher;
+import util.CmdTools;
 
 public class App {
+
+
+	private static final String jouvenceDir = ".";
+	private static String jouvenceFile = "jouvence.sh";
+	private static String jouvenceBranch = "master";
+
 
 	//example of args:
 	// -nbrCommit 10 -projectPath demoProject -sourcePath src -classPath demoProject/target
@@ -48,7 +55,11 @@ public class App {
 		System.out.println("classPath = "+classPath);
 		
 		System.out.println("execute git to generate "+nbr+" folders");
-		//TO DO : execute bash script
+
+
+		// TODO : execute bash script
+		CmdTools.executeSH(jouvenceDir, jouvenceFile, projectPath, (nbr+""), jouvenceBranch);
+
 		
 		for(int i=0;i<nbr;i++){
 			System.out.println("spoon sources "+projectPath+i+"/"+pathToSourceFromFolder);
