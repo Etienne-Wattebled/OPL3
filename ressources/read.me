@@ -1,0 +1,24 @@
+
+
+Le script Jouvence permet d'extraire et de clôner des versions antérieures d'un répertoire git.
+Il prend trois arguments
+
+
+USAGE
+------------------------------------------
+
+jouvence [dir source] [nbr of history] [branch]
+
+dir source          | le répertoire git dans lequel on va puiser les versions
+nbr of history      | Le nombre de commits exttraits. Si celui-ci est inférieur au nombre de commits réalisés, l'entièreté de l'historique de vesrion du répertoire sera extrait.
+branch              | La branche a extraire. Doit être indiqué !
+
+
+
+SAMPLE
+------------------------------------------
+
+> jouvence myrep 3 master
+...
+
+Les dossiers créer seront myrep_1, myrep_2, myrep_3. myrep_1 comprenant une version plus récente que myrep_3.
