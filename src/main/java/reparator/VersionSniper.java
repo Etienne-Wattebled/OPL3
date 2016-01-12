@@ -42,7 +42,7 @@ public class VersionSniper {
      */
     public List rechercheMethode(final String signature) {
 
-        CompilationUnit compileUnit = sp.getCompilationUnit();
+        /*CompilationUnit compileUnit = sp.getCompilationUnit();
 
         List<CtElement> elements = element.getElements(new Filter<CtElement>() {
             public boolean matches(CtElement element) {
@@ -50,7 +50,8 @@ public class VersionSniper {
             }
         });
 
-        return elements;
+        return elements;*/
+    	return null;
     }
 
 }

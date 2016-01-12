@@ -1,6 +1,8 @@
 package reparator;
 
 import org.apache.commons.cli.*;
+
+import spoon.Launcher;
 import util.CmdTools;
 
 import java.util.ArrayList;
@@ -8,8 +10,9 @@ import java.util.ArrayList;
 public class App {
 
 
-	private static final String jouvenceDir = ".";
-	private static String jouvenceFile = "jouvence.sh";
+	private static final String jouvenceDir = "./ressources";
+	//private static String jouvenceFile = "jouvence.sh";
+	private static String jouvenceFile = "jouvence_linux.sh";
 	private static String jouvenceBranch = "master";
 
 	private static ArrayList<VersionSniper> snipers;
@@ -20,7 +23,7 @@ public class App {
 
 
 	//example of args:
-	// -nbrCommit 10 -projectPath demoProject -sourcePath src -classPath demoProject/target
+	// -nbrCommit 3 -projectPath ressources/demoproject -sourcePath src -classPath ressources/demoproject/target:/home/m2iagl/dufaux/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar
 	public static void main(String[] args) {
 
 		// create Options object
@@ -59,7 +62,8 @@ public class App {
 
 
 		CmdTools.executeSH(jouvenceDir, jouvenceFile, projectPath, (nbr+""), jouvenceBranch);
-
+		
+		
 
 		for(int i=0;i<nbr;i++){
 			System.out.println("spoon sources "+projectPath+i+"/"+pathToSourceFromFolder);
@@ -70,6 +74,11 @@ public class App {
 
 		System.out.println("Spoon the last commit as the new project template = "+projectPath+"/"+pathToSourceFromFolder);
 		System.out.println("with classPath = "+classPath);
+		
+		Launcher spoon = new Launcher();
+		spoon.addProcessor(new MethodVersioningProcessor(snipers));
+        spoon.run(new String[]{"-i",projectPath+"/"+pathToSourceFromFolder,"--source-classpath",classPath});
+        System.out.println("---- End of program ----");
 
 	}
 
