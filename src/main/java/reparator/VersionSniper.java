@@ -5,6 +5,7 @@ import spoon.reflect.code.CtInvocation;
 import spoon.reflect.cu.CompilationUnit;
 import spoon.reflect.cu.SourcePosition;
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.Filter;
 
 import java.util.List;
@@ -34,7 +35,15 @@ public class VersionSniper {
         spoon.run(new String[]{"-i",pathToSource,"--source-classpath",classPath});
     }
 
+    public int getId(){
+    	return this.numero;
+    }
+    
+    public Factory getFactory(){
+    	return this.spoon.getFactory();
+    }
 
+    
     /**
      * Permet de rechercher et récupérer la structure d'une methode
      * @param signature
