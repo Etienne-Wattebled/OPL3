@@ -61,20 +61,20 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 			// add try catch in b1
 			CtTry ctTry = getFactory().Core().createTry();
 			ctTry.insertAfter(nwMethBody.getLastStatement());
+			// catch
+			CtCatch ctCatch = getFactory().Code().createCtCatch("allCatch", Throwable.class, nwMethBody);
+			((CtExpression<?>) ctCatch).setTypeCasts((List) new ArrayList(methodVersion.getThrownTypes()));
+			getFactory().Core().createContinue().insertBefore(ctCatch.getBody().getLastStatement());
+			// Associate catch to try
+			ctTry.addCatcher(ctCatch);
 
 			// add return appels de meth in try -> return methodeDeVersion(...);
 			// Invocation methode de version
 			List<CtExpression<?>> arguments = methodVersion.getParameters();
-			CtInvocation invocation = getFactory().Code().createInvocation((CtExpression<?>) ctCatch, methodVersion.getReference().getOverridingExecutable(), arguments);
+			CtInvocation invocation = getFactory().Code().createInvocation((CtExpression<?>) ctTry, methodVersion.getReference().getOverridingExecutable(), arguments);
 			// Ajout du return
 			CtReturn ctReturn = getFactory().Core().createReturn();
 			ctReturn.insertBefore(invocation);
-
-			// set Catch of try
-			CtCatch ctCatch = getFactory().Code().createCtCatch("allCatch", Throwable.class, nwMethBody);
-			((CtExpression<?>) ctCatch).setTypeCasts((List) new ArrayList(methodVersion.getThrownTypes()));
-
-			getFactory().Core().createContinue().insertBefore(ctCatch.getBody().getLastStatement());
 		}
 
 		// On remplace la dernière methode
