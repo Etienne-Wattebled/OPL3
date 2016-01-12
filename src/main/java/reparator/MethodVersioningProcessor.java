@@ -39,8 +39,24 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 			if(c.getQualifiedName().equals(parent.getQualifiedName())){
 				//we found the same class
 				//let's try to find the method now
+				Set<CtMethod<?>> methodsOfSniper = c.getMethods();
+				for(CtMethod<?> oldMethod : methodsOfSniper){
+					if(compareOfMethod(method,oldMethod)){
+						//TO DO
+					}
+				}
 			}
 		}
 	}
 
+	//probably not the good right to do (maybe extends CtMethod with our own class? idk
+	private boolean compareOfMethod(CtMethod m1, CtMethod m2){
+		
+		//actually just compare the signature because it is what we want. But if we use different exception after,
+		//we need to do it in spoon (compare name, returned type, parameters...)
+		if(!m1.getSignature().equals(m2.getSignature())){
+			return false;
+		}
+		return true;
+	}
 }
