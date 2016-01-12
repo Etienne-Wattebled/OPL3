@@ -21,4 +21,49 @@ Jean-Vital Durieu
   => pb est: si une fonction peut throw une exception gérée proprement par le programme, il faudrait la laisser passer. 
   => proposition: remonter tous les appels de fonctions pour voir si l'exception catchée est d'un type catché au dessus. Si oui, on la laisse passer (on la re-throw dans le catch?)
     => (ça serait cool si on pouvait gérer ça à l'execution pour remonter qu'une branche de l'arbre et pas tous les appels possible mais aucune idée).
- 
+
+
+
+==> Créer une fonction qui, pour un nom de fonction passé en parametre (et un sniper), retourne la liste des exceptions à ne pas catcher. 
+
+
+Proc(snipers)
+
+execute(CtClass c){
+
+pour ctmethod in ctclass :
+   ctmethod[] methods;
+   pour sniper in snipers :
+     ctmethods.add(creerFonctionDeVersion(ctmethod, sniper))
+   end pour
+
+   creerFonctionDappel(ctmethod, ctmethods);
+end pour.
+}
+
+
+
+creerFonctionDeVersion(ctmethod, sniper){
+
+cherche dans sniper si on a une ctmethod qui correspond à ctmethod
+cad 
+  même nom
+  même type de retour
+  même parametres
+  même exceptions
+}
+
+
+
+
+creerFonctionDappel(ctmethod, ctmethods){
+   create b1 = block vide de ctmethod
+   pour meth in ctmethods :
+      add try catch in b1
+      add return appels de meth in try
+      add continue in catch
+   end pour
+}
+
+
+
