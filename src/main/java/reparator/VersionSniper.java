@@ -14,7 +14,9 @@ import java.util.List;
  * Created by jvdur on 11/01/2016.
  */
 public class VersionSniper {
-
+	
+	public static int version = 0;
+	
     private Launcher spoon;
     private int numero;
     private String pathToSource;

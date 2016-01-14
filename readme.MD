@@ -66,4 +66,54 @@ creerFonctionDappel(ctmethod, ctmethods){
 }
 
 
+============================================
+nouvelle version souhaitée (inspiré de metamutator)
+
+Ex fonction d'appel:
+
+Class A {
+
+[...]
+public static int bar_version = 0;
+public static int bar_version_max = 2;
+
+bar(){
+  switch bar_version : {
+     0 :
+       bar_0();
+     1 : 
+       bar_1();
+     2 :
+       bar_2();
+     default:
+       ?? (bar_0?)
+    }
+  }
+}
+
+
+
+classes = loadclass(spooned)
+for classe in classes :
+  for method in classe.getmethods
+    while(vfield.getInt()<= vmaxfield.getInt()){
+      runtest
+      faitdestrucs (traitement check les verts, rouges, peut etre enregistrer un historique?)
+      class.(method.name)_version = class.(method.name)_version+1;
+    }
+
+
+Dans le programme on aurait dans le 2em main qqchose du genre
+(en utilisant la reflexion pour obtenir le champ static en fonction d'un nom de method 
+class.(method.name)_version)
+ressemble à un truc du genre:
+String version_field = methodz.getName()+"_version";
+String version_max_field = methodz.getName()+"_version";
+
+
+Field vfield = VersionSniper.class.getField(version_field);
+Field vmaxfield = VersionSniper.class.getField(version_max_field);
+System.out.println(vfield.getInt(null));
+System.out.println(vmaxfield.getInt(null));
+
 

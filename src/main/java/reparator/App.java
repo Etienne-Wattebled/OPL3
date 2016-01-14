@@ -5,6 +5,7 @@ import org.apache.commons.cli.*;
 import spoon.Launcher;
 import util.CmdTools;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class App {
@@ -26,6 +27,7 @@ public class App {
 	// -nbrCommit 3 -projectPath ressources/demoproject -sourcePath src -classPath ressources/demoproject/target:/home/m2iagl/dufaux/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar
 	public static void main(String[] args) {
 
+		
 		// create Options object
     	Options options = new Options();
     	// add t option
@@ -79,7 +81,7 @@ public class App {
 		spoon.addProcessor(new MethodVersioningProcessor(snipers));
         spoon.run(new String[]{"-i",projectPath+"/"+pathToSourceFromFolder,"--source-classpath",classPath});
         System.out.println("---- End of program ----");
-
+        
 	}
 
 }
