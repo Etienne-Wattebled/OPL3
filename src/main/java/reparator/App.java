@@ -24,7 +24,8 @@ public class App {
 
 
 	//example of args:
-	// -nbrCommit 3 -projectPath ressources/demoproject -sourcePath src -classPath ressources/demoproject/target:/home/m2iagl/dufaux/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar
+	// -nbrCommit 3 -projectPath ressources/demoproject -sourcePath src/main -classPath ressources/demoproject/target:/home/m2iagl/dufaux/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar
+	// -nbrCommit 3 -projectPath ressources/jsoup -sourcePath src/main -classPath ressources/jsoup/target:/home/dufaux/.m2/repository/junit/junit/4.5/junit-4.5.jar
 	public static void main(String[] args) {
 
 		
@@ -68,9 +69,6 @@ public class App {
 		
 
 		for(int i=0;i<nbr;i++){
-			System.out.println("spoon sources "+projectPath+i+"/"+pathToSourceFromFolder);
-			System.out.println("with classPath = "+classPath);
-
 			snipers.add(new VersionSniper(projectPath, pathToSourceFromFolder, classPath, i));
 		}
 

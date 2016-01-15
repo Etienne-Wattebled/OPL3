@@ -34,6 +34,10 @@ public class VersionSniper {
         this.numero = numero;
         this.pathToSource = projectPath+'_'+numero+'/'+innerProjectPath;
 
+        
+		System.out.println("spoon sources "+pathToSource);
+		System.out.println("with classPath = "+classPath);
+		
         spoon.run(new String[]{"-i",pathToSource,"--source-classpath",classPath});
     }
 

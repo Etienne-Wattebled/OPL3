@@ -12,11 +12,13 @@ import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.support.reflect.code.CtBlockImpl;
+import spoon.support.reflect.code.CtReturnImpl;
 
 public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 	
@@ -39,7 +41,9 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 			List<CtMethod<?>> oldMethods = new ArrayList<CtMethod<?>>();
 			for(VersionSniper sniper : snipers){
 				newMethod = createVersionMethod(method, sniper);
-				newMethodsVersions.add(newMethod);
+				if(newMethod != null){
+					newMethodsVersions.add(newMethod);
+				}
 			}
 
 			System.out.println("create");
@@ -79,8 +83,9 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 	}
 
 	
-	private void createFonctionDAppelSwitch(CtClass ctClass, CtMethod methodeSource, List<CtMethod> methodesDeVersions) {
-
+	private void createFonctionDAppelSwitch(CtClass ctClass, CtMethod<?> methodeSource, List<CtMethod> methodesDeVersions) {
+		CtReturn retur = null;
+		
 		//CtMethod originalMethod = (CtMethod) ctClass.getMethodsByName(methodeSource.getSimpleName()).get(0);
 
 		CtTypeReference refToInt = getFactory().Code().createCtTypeReference(Integer.class);
@@ -97,38 +102,63 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 		CtBlock nwMethBody = getFactory().Core().createBlock();
 		
 		CtSwitch ctSwitch = getFactory().Core().createSwitch();
+		
+		System.out.println("VersionField ==== "+versionField);
+		versionField.setParent(ctClass);
+		System.out.println(versionField.getDeclaringType());
+		System.out.println(versionField.getParent());
+		
 		CtFieldRead ctFieldRead = getFactory().Core().createFieldRead().setVariable(versionField.getReference());
 		ctSwitch.setSelector(ctFieldRead);
 		nwMethBody.addStatement(ctSwitch);
 		
 		int i =0;
+		System.out.println("---------------------------------");
+		System.out.println(methodesDeVersions);
 		for (CtMethod methodVersion : methodesDeVersions) {
 			
 			CtCase newCase = getFactory().Core().createCase();
 			CtExpression caseExpression = getFactory().Code().createCodeSnippetExpression(Integer.toString(i));
 			newCase.setCaseExpression(caseExpression);
 			
-			
-			//TO DO transformer la liste d'arguments en une liste d'expression.
-			List<CtExecutable> arguments = methodeSource.getParameters();
+			List<CtParameter<?>> arguments = methodeSource.getParameters();
+
+			//crée le tableau de parametre passé à l'appel de fonction. 
 			List<CtExpression> exps = new ArrayList<CtExpression>();
-			for(CtExecutable arg : arguments){ //ERROR CtParameterImpl cannot be cast in CtExecutable. WTF?
+			for(CtParameter<?> arg : arguments){ 
+				System.out.println("arg ==="+arg.getSignature());
 				CtExpression expArg = getFactory().Code().createCodeSnippetExpression(arg.getSimpleName());
 				exps.add(expArg);
+				System.out.println("DEFAULT EXPRESSION =");
+				System.out.println(expArg);
 			}
 			
-			System.out.println("---");
-			System.out.println(arguments);
-			//CtExecutio
-			//getFactory().Code().invo
+			//cree l'appel de fonction
+			
+			//System.out.println("---");
+			//System.out.println(arguments);
 			CtInvocation callFunction = getFactory().Core().createInvocation();
+			//System.out.println(methodVersion);
 			callFunction.setExecutable(methodVersion.getReference());
+			//System.out.println(exps.size());
 			callFunction.setArguments(exps);
 			
-			newCase.addStatement(callFunction);
+			//ajoute "return" devant si la fonction retourne quelque chose
+			if(! callFunction.getExecutable().getType().getActualClass().equals(void.class)){
+				retur = new CtReturnImpl();
+				retur.setReturnedExpression(callFunction);
+				newCase.addStatement(retur);
+			}
+			else{
+				newCase.addStatement(callFunction);
+			}
+			//ajoute le case et passe a l'appel suivant
 			ctSwitch.addCase(newCase);
-			
 			i++;
+		}
+		//add the last return at the end of method as default. (i don't know how to create default in switch java).
+		if(retur != null){
+			nwMethBody.addStatement(retur);
 		}
 		
 		methodeSource.setBody(nwMethBody);

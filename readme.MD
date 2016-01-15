@@ -66,7 +66,7 @@ creerFonctionDappel(ctmethod, ctmethods){
 }
 
 
-============================================
+========================================================================================
 nouvelle version souhaitée (inspiré de metamutator)
 
 Ex fonction d'appel:
@@ -93,27 +93,39 @@ bar(){
 
 
 
-classes = loadclass(spooned)
-for classe in classes :
-  for method in classe.getmethods
-    while(vfield.getInt()<= vmaxfield.getInt()){
-      runtest
-      faitdestrucs (traitement check les verts, rouges, peut etre enregistrer un historique?)
-      class.(method.name)_version = class.(method.name)_version+1;
-    }
 
 
-Dans le programme on aurait dans le 2em main qqchose du genre
-(en utilisant la reflexion pour obtenir le champ static en fonction d'un nom de method 
-class.(method.name)_version)
-ressemble à un truc du genre:
-String version_field = methodz.getName()+"_version";
-String version_max_field = methodz.getName()+"_version";
+TO DO:
+
+essayer le programme sur un gros projet (genre jsoup ou spoon ou autre).
+
+faire tout le junit runner. C'est dur donc bon... Voir si on peut s'inspirer du metamutator, ou du github de max ou bien d'antoine. 
+
+Le concept serait de faire en pseudo code:
+
+Loader les class du projet spooner
+Loader tous les tests du projet spooner
+  pour chaque classe du projet spooner
+    pour chaque methode de la classe
+      vfield = clazz.getField(methodz.getName()+"_version");
+      vmaxfield = clazz.getField(methodz.getName()+"_version");
+      while(vfield.getInt(null) < vmaxfield.getInt(null)){
+        runtest();
+        Analyse les resultats (tout vert? tout rouge?)
+        vfield = vfield.getInt + 1;
+      }
 
 
-Field vfield = VersionSniper.class.getField(version_field);
-Field vmaxfield = VersionSniper.class.getField(version_max_field);
-System.out.println(vfield.getInt(null));
-System.out.println(vmaxfield.getInt(null));
+
+Vla pour la théorie mais j'ai jamais fait et je sais pas ce que ça peut donner. 
+      
+ 
+
+
+
+
+
+
+
 
 
