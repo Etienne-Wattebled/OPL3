@@ -13,7 +13,7 @@ public class App {
 
 	private static final String jouvenceDir = "./ressources";
 	//private static String jouvenceFile = "jouvence.sh";
-	private static String jouvenceFile = "jouvence_linux.sh";
+	private static String jouvenceFile = "jouvence";
 	private static String jouvenceBranch = "master";
 
 	private static ArrayList<VersionSniper> snipers;
