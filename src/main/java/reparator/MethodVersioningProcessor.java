@@ -22,27 +22,46 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 	}
 
 	public void process(CtClass element) {
+		if(element.isInterface() || element.isAnonymous() 
+				|| element.hasModifier(ModifierKind.PRIVATE) 
+				|| element.hasModifier(ModifierKind.PROTECTED)
+				|| element.getParent(CtClass.class) != null){ //possede un parent (donc nestedclass)
+			System.out.println(element.getSignature());
+			return;
+		}
 		Set<CtMethod<?>> methods = new TreeSet<CtMethod<?>>(element.getMethods());
 		List<CtMethod> newMethodsVersions;
 		CtMethod newMethod;
 		
-		
+		//if(element.getSignature().contains("UnModifiableCollection")){
+		//	System.out.println("Class = "+element.getSignature());
+		//}
 		//for each method of the last version
 		for(CtMethod<?> method : methods){
-			newMethodsVersions = new ArrayList<CtMethod>();
-			List<CtMethod<?>> oldMethods = new ArrayList<CtMethod<?>>();
-			for(VersionSniper sniper : snipers){
-				newMethod = createVersionMethod(method, sniper);
-				if(newMethod != null){
-					newMethodsVersions.add(newMethod);
+
+			//if(element.getSignature().contains("UnModifiableCollection")){
+			//	System.out.println("  Method = "+method.getSignature());
+			//  System.out.println(method.getBody());
+			//}	
+			if(method.getBody() != null){
+				newMethodsVersions = new ArrayList<CtMethod>();
+				//List<CtMethod<?>> oldMethods = new ArrayList<CtMethod<?>>();
+				for(VersionSniper sniper : snipers){
+					newMethod = createVersionMethod(method, sniper);
+					if(newMethod != null){
+						if(element.getSignature().contains("UnModifiableCollection")){
+							System.out.println("NEW Method = "+newMethod.getSignature());
+						}
+						newMethodsVersions.add(newMethod);
+					}
 				}
+	
+				//System.out.println("create");
+				createFonctionDAppelSwitch(element, method, newMethodsVersions);
+	
+				//System.out.println("---------------------------------------------------");
+				//System.out.println(element);
 			}
-
-			System.out.println("create");
-			createFonctionDAppelSwitch(element, method, newMethodsVersions);
-
-			System.out.println("---------------------------------------------------");
-			System.out.println(element);
 		}
 		
 	}
@@ -53,16 +72,33 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 		
 		CtType parent = method.getParent(CtType.class);
 		for(CtType c : factory.Class().getAll()){
+			//System.out.println("---- cccccc == "+c.getQualifiedName());
+			//System.out.println("---- parent == "+parent.getQualifiedName());
+			
 			if(c.getQualifiedName().equals(parent.getQualifiedName())){
 				//we found the same class
 				//let's try to find the method now
 				Set<CtMethod<?>> methodsOfSniper = c.getMethods();
 				for(CtMethod<?> oldMethod : methodsOfSniper){
+					
+					//System.out.println("  Method = "+method.getSignature());
+					//System.out.println("  OldMethod = "+oldMethod.getSignature());
+					
 					if(method.getSignature().equals(oldMethod.getSignature())){
+						
+						//System.out.println("METHOD ===");
+						//System.out.println(method);
+						//System.out.println(method.getBody());
 						//create new method with clone of actual method and set the block with a clone of old method block
 						CtMethod newMethod = getFactory().Core().clone(method);
+						
+						//remove annotation (to avoid @override for example)
+						newMethod.setAnnotations(new ArrayList<CtAnnotation<?>>());
+						
 						//CtMethod newMethod = getFactory().Core().createMethod();
 						CtBlock newBlock = getFactory().Core().clone(oldMethod.getBody());
+						//System.out.println("NEW METHOD ===");
+						//System.out.println(newMethod);
 						newMethod.setBody(newBlock);
 						newMethod.setSimpleName(newMethod.getSimpleName()+"_"+version);
 						parent.addMethod(newMethod);
@@ -95,18 +131,18 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 		
 		CtSwitch ctSwitch = getFactory().Core().createSwitch();
 		
-		System.out.println("VersionField ==== "+versionField);
+		//System.out.println("VersionField ==== "+versionField);
 		versionField.setParent(ctClass);
-		System.out.println(versionField.getDeclaringType());
-		System.out.println(versionField.getParent());
+		//System.out.println(versionField.getDeclaringType());
+		//System.out.println(versionField.getParent());
 		
 		CtFieldRead ctFieldRead = getFactory().Core().createFieldRead().setVariable(versionField.getReference());
 		ctSwitch.setSelector(ctFieldRead);
 		nwMethBody.addStatement(ctSwitch);
 		
 		int i =0;
-		System.out.println("---------------------------------");
-		System.out.println(methodesDeVersions);
+		//System.out.println("---------------------------------");
+		//System.out.println(methodesDeVersions);
 		for (CtMethod methodVersion : methodesDeVersions) {
 			
 			CtCase newCase = getFactory().Core().createCase();
@@ -118,11 +154,11 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 			//crée le tableau de parametre passé à l'appel de fonction. 
 			List<CtExpression> exps = new ArrayList<CtExpression>();
 			for(CtParameter<?> arg : arguments){ 
-				System.out.println("arg ==="+arg.getSignature());
+				//System.out.println("arg ==="+arg.getSignature());
 				CtExpression expArg = getFactory().Code().createCodeSnippetExpression(arg.getSimpleName());
 				exps.add(expArg);
-				System.out.println("DEFAULT EXPRESSION =");
-				System.out.println(expArg);
+				//System.out.println("DEFAULT EXPRESSION =");
+				//System.out.println(expArg);
 			}
 			
 			//cree l'appel de fonction
@@ -136,7 +172,18 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 			callFunction.setArguments(exps);
 			
 			//ajoute "return" devant si la fonction retourne quelque chose
-			if(! callFunction.getExecutable().getType().getActualClass().equals(void.class)){
+			/*System.out.println("------------------------CALL FUNCTION ------------------------");
+			System.out.println(callFunction);
+			System.out.println("------------------------GET EXECUTABLE ------------------------");
+			System.out.println(callFunction.getExecutable());
+			System.out.println("------------------------GET TYPE ------------------------");
+			System.out.println(callFunction.getExecutable().getType());
+			System.out.println("------------------------GET ACTUAL CLASS ------------------------");
+			System.out.println("--"+callFunction.getExecutable().getType().getSimpleName()+"--");*/
+			//System.out.println(callFunction.getExecutable().getType().getActualClass());
+			//error  cannot load class: spoon.reflect.factory.InternalFactory with class loader sun.misc.Launcher$AppClassLoader@4e0e2f2a
+			//if(! callFunction.getExecutable().getType().getActualClass().equals(void.class)){
+			if(! callFunction.getExecutable().getType().getSimpleName().equals("void")){
 				retur = new CtReturnImpl();
 				retur.setReturnedExpression(callFunction);
 				newCase.addStatement(retur);
