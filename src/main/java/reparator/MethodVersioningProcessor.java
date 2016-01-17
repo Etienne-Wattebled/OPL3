@@ -22,7 +22,8 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 	}
 
 	public void process(CtClass element) {
-		if(element.isInterface() || element.isAnonymous() 
+		if(element.isInterface() || element.getSignature().toUpperCase().contains("enum".toUpperCase()) //quick fix, need to find which is enum.
+				|| element.isAnonymous() 
 				|| element.hasModifier(ModifierKind.PRIVATE) 
 				|| element.hasModifier(ModifierKind.PROTECTED)
 				|| element.getParent(CtClass.class) != null){ //possede un parent (donc nestedclass)
@@ -43,7 +44,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 			//	System.out.println("  Method = "+method.getSignature());
 			//  System.out.println(method.getBody());
 			//}	
-			if(method.getBody() != null){
+			if(method.getBody() != null && !method.hasModifier(ModifierKind.STATIC)){
 				newMethodsVersions = new ArrayList<CtMethod>();
 				//List<CtMethod<?>> oldMethods = new ArrayList<CtMethod<?>>();
 				for(VersionSniper sniper : snipers){
