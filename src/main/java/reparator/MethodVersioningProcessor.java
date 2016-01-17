@@ -33,17 +33,8 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 		Set<CtMethod<?>> methods = new TreeSet<CtMethod<?>>(element.getMethods());
 		List<CtMethod> newMethodsVersions;
 		CtMethod newMethod;
-		
-		//if(element.getSignature().contains("UnModifiableCollection")){
-		//	System.out.println("Class = "+element.getSignature());
-		//}
-		//for each method of the last version
-		for(CtMethod<?> method : methods){
 
-			//if(element.getSignature().contains("UnModifiableCollection")){
-			//	System.out.println("  Method = "+method.getSignature());
-			//  System.out.println(method.getBody());
-			//}	
+		for(CtMethod<?> method : methods){
 			if(method.getBody() != null && !method.hasModifier(ModifierKind.STATIC)){
 				newMethodsVersions = new ArrayList<CtMethod>();
 				//List<CtMethod<?>> oldMethods = new ArrayList<CtMethod<?>>();
@@ -56,12 +47,8 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 						newMethodsVersions.add(newMethod);
 					}
 				}
-	
-				//System.out.println("create");
 				createFonctionDAppelSwitch(element, method, newMethodsVersions);
 	
-				//System.out.println("---------------------------------------------------");
-				//System.out.println(element);
 			}
 		}
 		
@@ -73,8 +60,6 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 		
 		CtType parent = method.getParent(CtType.class);
 		for(CtType c : factory.Class().getAll()){
-			//System.out.println("---- cccccc == "+c.getQualifiedName());
-			//System.out.println("---- parent == "+parent.getQualifiedName());
 			
 			if(c.getQualifiedName().equals(parent.getQualifiedName())){
 				//we found the same class
@@ -82,15 +67,8 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 				Set<CtMethod<?>> methodsOfSniper = c.getMethods();
 				for(CtMethod<?> oldMethod : methodsOfSniper){
 					
-					//System.out.println("  Method = "+method.getSignature());
-					//System.out.println("  OldMethod = "+oldMethod.getSignature());
-					
 					if(method.getSignature().equals(oldMethod.getSignature())){
 						
-						//System.out.println("METHOD ===");
-						//System.out.println(method);
-						//System.out.println(method.getBody());
-						//create new method with clone of actual method and set the block with a clone of old method block
 						CtMethod newMethod = getFactory().Core().clone(method);
 						
 						//remove annotation (to avoid @override for example)
@@ -98,8 +76,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 						
 						//CtMethod newMethod = getFactory().Core().createMethod();
 						CtBlock newBlock = getFactory().Core().clone(oldMethod.getBody());
-						//System.out.println("NEW METHOD ===");
-						//System.out.println(newMethod);
+
 						newMethod.setBody(newBlock);
 						newMethod.setSimpleName(newMethod.getSimpleName()+"_"+version);
 						parent.addMethod(newMethod);
@@ -173,17 +150,6 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 			callFunction.setArguments(exps);
 			
 			//ajoute "return" devant si la fonction retourne quelque chose
-			/*System.out.println("------------------------CALL FUNCTION ------------------------");
-			System.out.println(callFunction);
-			System.out.println("------------------------GET EXECUTABLE ------------------------");
-			System.out.println(callFunction.getExecutable());
-			System.out.println("------------------------GET TYPE ------------------------");
-			System.out.println(callFunction.getExecutable().getType());
-			System.out.println("------------------------GET ACTUAL CLASS ------------------------");
-			System.out.println("--"+callFunction.getExecutable().getType().getSimpleName()+"--");*/
-			//System.out.println(callFunction.getExecutable().getType().getActualClass());
-			//error  cannot load class: spoon.reflect.factory.InternalFactory with class loader sun.misc.Launcher$AppClassLoader@4e0e2f2a
-			//if(! callFunction.getExecutable().getType().getActualClass().equals(void.class)){
 			if(! callFunction.getExecutable().getType().getSimpleName().equals("void")){
 				retur = new CtReturnImpl();
 				retur.setReturnedExpression(callFunction);
@@ -203,80 +169,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 		
 		methodeSource.setBody(nwMethBody);
 		
-		/*// pour meth in ctmethods :
-		for (CtMethod methodVersion : methodesDeVersions) {
-
-			// add try catch in b1
-			CtTry ctTry = getFactory().Core().createTry();
-			nwMethBody.addStatement(ctTry);
-			//ctTry.insertAfter(nwMethBody.getLastStatement());
-			
-			// catch
-			CtCatch ctCatch = getFactory().Code().createCtCatch("allCatch", Throwable.class, nwMethBody);
-			
-			//To do (catch can't be cast in expression)
-			((CtExpression<?>) ctCatch).setTypeCasts((List) new ArrayList(methodVersion.getThrownTypes()));
-			getFactory().Core().createContinue().insertBefore(ctCatch.getBody().getLastStatement());
-			
-			
-			// Associate catch to try
-			ctTry.addCatcher(ctCatch);
-
-			// add return appels de meth in try -> return methodeDeVersion(...);
-			// Invocation methode de version
-			List<CtExpression<?>> arguments = methodVersion.getParameters();
-			CtInvocation invocation = getFactory().Code().createInvocation((CtExpression<?>) ctTry, methodVersion.getReference().getOverridingExecutable(), arguments);
-			// Ajout du return
-			CtReturn ctReturn = getFactory().Core().createReturn();
-			ctReturn.insertBefore(invocation);
-		}
-
-		// On remplace la dernière methode
-		originalMethod.getBody().replace(nwMethBody);*/
-
 	}
 	
-	
-	/*private void createFonctionDAppel(CtClass ctClass, CtMethod methodeSource, List<CtMethod> methodesDeVersions) {
-
-		CtMethod originalMethod = (CtMethod) ctClass.getMethodsByName(methodeSource.getSimpleName()).get(0);
-
-		// create b1 = block vide de ctmethod
-		//CtBlock originalMethodBlock = originalMethod.getBody();
-		CtBlock nwMethBody = getFactory().Core().createBlock();
-
-
-		// pour meth in ctmethods :
-		for (CtMethod methodVersion : methodesDeVersions) {
-
-			// add try catch in b1
-			CtTry ctTry = getFactory().Core().createTry();
-			nwMethBody.addStatement(ctTry);
-			//ctTry.insertAfter(nwMethBody.getLastStatement());
-			
-			// catch
-			CtCatch ctCatch = getFactory().Code().createCtCatch("allCatch", Throwable.class, nwMethBody);
-			
-			//To do (catch can't be cast in expression)
-			((CtExpression<?>) ctCatch).setTypeCasts((List) new ArrayList(methodVersion.getThrownTypes()));
-			getFactory().Core().createContinue().insertBefore(ctCatch.getBody().getLastStatement());
-			
-			
-			// Associate catch to try
-			ctTry.addCatcher(ctCatch);
-
-			// add return appels de meth in try -> return methodeDeVersion(...);
-			// Invocation methode de version
-			List<CtExpression<?>> arguments = methodVersion.getParameters();
-			CtInvocation invocation = getFactory().Code().createInvocation((CtExpression<?>) ctTry, methodVersion.getReference().getOverridingExecutable(), arguments);
-			// Ajout du return
-			CtReturn ctReturn = getFactory().Core().createReturn();
-			ctReturn.insertBefore(invocation);
-		}
-
-		// On remplace la dernière methode
-		originalMethod.getBody().replace(nwMethBody);
-
-	}*/
 
 }
