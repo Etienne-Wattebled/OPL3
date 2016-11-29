@@ -26,7 +26,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 				|| element.isAnonymous() 
 				|| element.hasModifier(ModifierKind.PRIVATE) 
 				|| element.hasModifier(ModifierKind.PROTECTED)
-				|| element.getParent(CtClass.class) != null){ //possede un parent (donc nestedclass)
+				|| element.getParent(CtClass.class) != null){ //possède un parent (donc nestedclass)
 			System.out.println(element.getSignature());
 			return;
 		}
@@ -109,18 +109,14 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 		
 		CtSwitch ctSwitch = getFactory().Core().createSwitch();
 		
-		//System.out.println("VersionField ==== "+versionField);
 		versionField.setParent(ctClass);
-		//System.out.println(versionField.getDeclaringType());
-		//System.out.println(versionField.getParent());
 		
 		CtFieldRead ctFieldRead = getFactory().Core().createFieldRead().setVariable(versionField.getReference());
 		ctSwitch.setSelector(ctFieldRead);
 		nwMethBody.addStatement(ctSwitch);
 		
 		int i =0;
-		//System.out.println("---------------------------------");
-		//System.out.println(methodesDeVersions);
+		
 		for (CtMethod methodVersion : methodesDeVersions) {
 			
 			CtCase newCase = getFactory().Core().createCase();
@@ -129,7 +125,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 			
 			List<CtParameter<?>> arguments = methodeSource.getParameters();
 
-			//crée le tableau de parametre passé à l'appel de fonction. 
+			//crée le tableau de paramètres passé à l'appel de fonction. 
 			List<CtExpression> exps = new ArrayList<CtExpression>();
 			for(CtParameter<?> arg : arguments){ 
 				//System.out.println("arg ==="+arg.getSignature());
@@ -139,7 +135,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 				//System.out.println(expArg);
 			}
 			
-			//cree l'appel de fonction
+			//crée l'appel de fonction
 			
 			//System.out.println("---");
 			//System.out.println(arguments);
@@ -158,11 +154,11 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 			else{
 				newCase.addStatement(callFunction);
 			}
-			//ajoute le case et passe a l'appel suivant
+			//ajoute le case et passe à l'appel suivant
 			ctSwitch.addCase(newCase);
 			i++;
 		}
-		//add the last return at the end of method as default. (i don't know how to create default in switch java).
+		//add the last return at the end of method as default. (I don't know how to create default in switch java).
 		if(retur != null){
 			nwMethBody.addStatement(retur);
 		}

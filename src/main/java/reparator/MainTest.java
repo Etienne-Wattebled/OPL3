@@ -41,7 +41,7 @@ public class MainTest {
 		String repertoire = "org.jsoup";
 		final URL[] urls = { new File(repertoire).toURI().toURL()};
 		URLClassLoader cl = URLClassLoader.newInstance(urls);
-
+		
 		Reflections reflections = new Reflections(new ConfigurationBuilder()
 			    .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
 			    .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))

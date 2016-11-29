@@ -44,24 +44,4 @@ public class VersionSniper {
     	return this.spoon.getFactory();
     }
 
-    
-    /**
-     * Permet de rechercher et récupérer la structure d'une methode
-     * @param signature
-     * @return
-     */
-    public List rechercheMethode(final String signature) {
-
-        /*CompilationUnit compileUnit = sp.getCompilationUnit();
-
-        List<CtElement> elements = element.getElements(new Filter<CtElement>() {
-            public boolean matches(CtElement element) {
-                return element.getSignature() == signature;
-            }
-        });
-
-        return elements;*/
-    	return null;
-    }
-
 }
