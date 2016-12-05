@@ -3,8 +3,6 @@ package reparator;
 import spoon.Launcher;
 import spoon.reflect.factory.Factory;
 
-import java.util.List;
-
 /**
  * Created by jvdur on 11/01/2016.
  */
@@ -33,7 +31,11 @@ public class VersionSniper {
 		System.out.println("spoon sources "+pathToSource);
 		System.out.println("with classPath = "+classPath);
 		
-        spoon.run(new String[]{"-i",pathToSource,"--source-classpath",classPath});
+        spoon.run(new String[]{
+        		"-i",pathToSource,
+        		"--source-classpath",classPath,
+        		"--output-type","nooutput"
+        });
     }
 
     public int getId(){

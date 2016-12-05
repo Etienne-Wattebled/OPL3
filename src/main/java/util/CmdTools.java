@@ -1,6 +1,9 @@
 package util;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Created by jvdur on 11/01/2016.
@@ -23,6 +26,4 @@ public class CmdTools {
             e.printStackTrace();
         }
     }
-
-
 }

@@ -22,11 +22,13 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 	}
 
 	public void process(CtClass element) {
-		if(element.isInterface() || element.getSignature().toUpperCase().contains("enum".toUpperCase()) //quick fix, need to find which is enum.
+		if (element.isInterface() 
+				|| element.getSignature().toUpperCase().contains("enum".toUpperCase()) //quick fix, need to find which is enum.
 				|| element.isAnonymous() 
 				|| element.hasModifier(ModifierKind.PRIVATE) 
 				|| element.hasModifier(ModifierKind.PROTECTED)
-				|| element.getParent(CtClass.class) != null){ //possède un parent (donc nestedclass)
+				|| element.getParent(CtClass.class) != null
+				|| element.getSimpleName().endsWith("Test")) { //possède un parent (donc nestedclass)
 			System.out.println(element.getSignature());
 			return;
 		}
@@ -97,11 +99,11 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 		CtTypeReference refToInt = getFactory().Code().createCtTypeReference(Integer.class);
 		
 		//create versionField
-		CtField versionField = getFactory().Code().createCtField(methodeSource.getSimpleName()+"_version",refToInt,"0", ModifierKind.FINAL, ModifierKind.PRIVATE, ModifierKind.STATIC);
+		CtField versionField = getFactory().Code().createCtField(methodeSource.getSimpleName()+"_version",refToInt,"0", ModifierKind.PUBLIC, ModifierKind.STATIC);
 		ctClass.addField(versionField);
 		
 		//create versionMaxField
-		CtField versionMaxField = getFactory().Code().createCtField(methodeSource.getSimpleName()+"_version_max",refToInt,Integer.toString(methodesDeVersions.size()-1), ModifierKind.FINAL, ModifierKind.PRIVATE, ModifierKind.STATIC);
+		CtField versionMaxField = getFactory().Code().createCtField(methodeSource.getSimpleName()+"_version_max",refToInt,Integer.toString(methodesDeVersions.size()-1), ModifierKind.PUBLIC, ModifierKind.STATIC);
 		ctClass.addField(versionMaxField);
 		
 		// create b1 = block vide de ctmethod
