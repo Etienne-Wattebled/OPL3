@@ -71,7 +71,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 					
 					if(method.getSignature().equals(oldMethod.getSignature())){
 						
-						CtMethod newMethod = getFactory().Core().clone(method);
+						CtMethod newMethod = getFactory().Core().clone(oldMethod);
 						
 						//remove annotation (to avoid @override for example)
 						newMethod.setAnnotations(new ArrayList<CtAnnotation<?>>());
