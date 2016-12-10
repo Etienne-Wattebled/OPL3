@@ -81,6 +81,9 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 
 						newMethod.setBody(newBlock);
 						newMethod.setSimpleName(newMethod.getSimpleName()+"_"+version);
+						newMethod.removeModifier(ModifierKind.PUBLIC);
+						newMethod.removeModifier(ModifierKind.PROTECTED);
+						newMethod.addModifier(ModifierKind.PRIVATE);
 						parent.addMethod(newMethod);
 						return newMethod;
 					}
