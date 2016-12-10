@@ -140,7 +140,9 @@ public class App {
 				 try{
 					 Field vfield = c.getDeclaredField((m.getName()+"_version"));
 				     Field vmaxfield = c.getDeclaredField(m.getName()+"_version_max");
-				 
+				     vfield.setAccessible(true);
+				     vmaxfield.setAccessible(true);
+				     
 					 System.out.println("MODIF METHOD "+m.getName());
 				      while(((Integer)(vfield.get(Integer.class))).intValue() < ((Integer)(vmaxfield.get(Integer.class))).intValue()){
 				    	  runTests();
