@@ -8,6 +8,7 @@ import spoon.reflect.reference.CtTypeReference;
 import spoon.support.reflect.code.CtReturnImpl;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -17,7 +18,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 	
 	List<VersionSniper> snipers;
 
-	public MethodVersioningProcessor(ArrayList<VersionSniper> snipers) {
+	public MethodVersioningProcessor(LinkedList<VersionSniper> snipers) {
 		this.snipers = snipers;
 	}
 
@@ -38,7 +39,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 
 		for(CtMethod<?> method : methods){
 			if(method.getBody() != null && !method.hasModifier(ModifierKind.STATIC)){
-				newMethodsVersions = new ArrayList<CtMethod>();
+				newMethodsVersions = new LinkedList<CtMethod>();
 				//List<CtMethod<?>> oldMethods = new ArrayList<CtMethod<?>>();
 				for(VersionSniper sniper : snipers){
 					newMethod = createVersionMethod(method, sniper);
