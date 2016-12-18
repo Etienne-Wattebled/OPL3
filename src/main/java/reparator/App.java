@@ -187,7 +187,6 @@ public class App {
 		System.out.println(projectClasses.size());
 
 		JUnitCore jUnit = new JUnitCore();
-		jUnit.addListener(new TextListener(new PrintStream(new File("D:/logs.txt"))));
 		Class[] classes = new Class[testsClasses.size()];
 		classes = testsClasses.toArray(classes);
 		Result result = null;
