@@ -159,6 +159,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 			}
 			else{
 				newCase.addStatement(callFunction);
+				newCase.addStatement(getFactory().Core().createBreak());
 			}
 			//ajoute le case et passe à l'appel suivant
 			ctSwitch.addCase(newCase);
