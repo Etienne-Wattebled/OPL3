@@ -151,7 +151,9 @@ public class App {
 		List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
 		classLoadersList.add(ClasspathHelper.contextClassLoader());
 		classLoadersList.add(ClasspathHelper.staticClassLoader());
-
+		String resultat = null;
+		int nbTestsKO = Integer.MAX_VALUE;
+		
 		Reflections reflections = new Reflections(new ConfigurationBuilder()
 				.setScanners(new SubTypesScanner(
 						false /* don't exclude Object.class */), new ResourcesScanner())
@@ -203,6 +205,14 @@ public class App {
 						System.out.println(new StringBuilder().append("runCount = ").append(result.getRunCount())
 								.append("\nFailureCount = ").append(result.getFailureCount()).append("\n"));
 
+						if (nbTestsKO > result.getFailureCount()) {
+							nbTestsKO = result.getFailureCount();
+							resultat = new StringBuilder().append("Il faut utiliser la méthode ")
+									.append(m.getName()).append(" de la classe ").append(c.getSimpleName())
+									.append(" version ").append(((Integer)(vfield.get(Integer.class))).intValue())
+									.append(". Le nombre d'échecs est de ").append(nbTestsKO).toString();
+						}
+						
 						vfield.set(Integer.class, new Integer(((Integer) (vfield.get(Integer.class))).intValue() + 1));
 					}
 					vfield.set(Integer.class, new Integer(0));
@@ -213,5 +223,6 @@ public class App {
 			}
 		}
 		System.out.println("---- End of program ----");
+		System.out.println(resultat);
 	}
 }
