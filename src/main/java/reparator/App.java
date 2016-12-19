@@ -32,9 +32,6 @@ public class App {
 
 	private static final String jouvenceDir = "ressources";
 
-	private static final String spoonedMainDir = "spooned";
-	private static final String spoonedTestDir = "spooned-test";
-
 	private static final String targetMainPath = new StringBuilder().append("target").append(File.separator)
 			.append("classes").toString();
 	
@@ -134,7 +131,6 @@ public class App {
 				"-i", new StringBuilder().append(projectPath).append(File.separator).append(sourceMainPath).toString(),
 				"--source-classpath", classPath,
 				"-d", targetMainPath,
-				"-o", spoonedMainDir,
 				"--compile"
 		});
 		spoon = new Launcher();
@@ -143,12 +139,10 @@ public class App {
 				"--source-classpath",
 				new StringBuilder().append(classPath).append(File.pathSeparatorChar).append(targetMainPath).toString(),
 				"-d", targetTestPath, 
-				"-o", spoonedTestDir,
 				"--compile"
 		});
 
-		FunctionsUtils.processResourcesFolders(projectPath, sourceMainPath, sourceTestPath, spoonedMainDir,
-				spoonedTestDir, targetMainPath, targetTestPath);
+		FunctionsUtils.processResourcesFolders(projectPath, sourceMainPath, sourceTestPath, targetMainPath, targetTestPath);
 		FunctionsUtils.putAllPropertiesFilesInTargetFolders(projectPath, sourceMainPath, sourceTestPath, targetMainPath,
 				targetTestPath);
 	}

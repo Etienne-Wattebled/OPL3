@@ -37,7 +37,6 @@ public class FunctionsUtils {
 	public static void processResourcesFolders(
 			String projectPath, 
 			String sourceMainPath, String sourceTestPath,
-			String spoonedMainDir, String spoonedTestDir,
 			String targetMainPath, String targetTestPath) {
 		
 		File sourceMain = new File(projectPath+File.separator+sourceMainPath);
@@ -45,8 +44,6 @@ public class FunctionsUtils {
 		sourceMain = sourceMain.getParentFile();
 		sourceTest = sourceTest.getParentFile();
 		
-		File spoonedMain = new File(spoonedMainDir);
-		File spoonedTest = new File(spoonedTestDir);
 		File targetMain = new File(targetMainPath);
 		File targetTest = new File(targetTestPath);
 		
@@ -55,7 +52,6 @@ public class FunctionsUtils {
 			subFiles = sourceMain.listFiles();
 			for (File f : subFiles) {
 				if (f.isDirectory() && f.getName().equals("resources")) {
-					putAllFilesInFolder(f.listFiles(),spoonedMain);
 					putAllFilesInFolder(f.listFiles(),targetMain);
 
 				}
@@ -63,7 +59,6 @@ public class FunctionsUtils {
 			subFiles = sourceTest.listFiles();
 			for (File f : subFiles) {
 				if (f.isDirectory() && f.getName().equals("resources")) {
-					putAllFilesInFolder(f.listFiles(),spoonedTest);
 					putAllFilesInFolder(f.listFiles(),targetTest);
 				}
 			}
