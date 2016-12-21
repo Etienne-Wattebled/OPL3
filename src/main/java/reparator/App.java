@@ -112,7 +112,7 @@ public class App {
 				.append("\nexecute git to generate ").append(nbr).append(" folders").toString());
 
 		// Download versions
-		CmdTools.executeSH(jouvenceDir, jouvenceFile, projectPath, String.valueOf(nbr), jouvenceBranch);
+		//CmdTools.executeSH(jouvenceDir, jouvenceFile, projectPath, String.valueOf(nbr), jouvenceBranch);
 
 		FunctionsUtils.processCleanFiles(projectPath);
 
@@ -210,7 +210,9 @@ public class App {
 							resultat = new StringBuilder().append("Il faut utiliser la méthode ")
 									.append(m.getName()).append(" de la classe ").append(c.getSimpleName())
 									.append(" version ").append(((Integer)(vfield.get(Integer.class))).intValue())
-									.append(". Le nombre d'échecs est de ").append(nbTestsKO).toString();
+									.append(". Le nombre d'échecs est de ").append(nbTestsKO)
+									.append(".\nLa méthode est la suivante : \n")
+									.append(m.toString()).toString();
 						}
 						
 						vfield.set(Integer.class, new Integer(((Integer) (vfield.get(Integer.class))).intValue() + 1));
