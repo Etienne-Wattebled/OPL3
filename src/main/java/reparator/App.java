@@ -96,7 +96,7 @@ public class App {
 			downloadVersionsAndRunSpoonTransformations(Integer.parseInt(nbrCommit), projectPath, classPath,
 					sourceMainPath, sourceTestPath);
 
-			runAllTests(packages.trim().split(";"), classPath);
+			runAllTests(packages.trim().split(File.pathSeparator), classPath);
 		} catch (ParseException exp) {
 			System.err.println("Parsing failed.  Reason: " + exp.getMessage());
 		}
