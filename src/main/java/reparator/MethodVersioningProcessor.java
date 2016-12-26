@@ -8,6 +8,7 @@ import spoon.reflect.reference.CtTypeReference;
 import spoon.support.reflect.code.CtReturnImpl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -17,19 +18,19 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 	
 	
 	List<VersionSniper> snipers;
-
+	HashMap<CtMethod,String> fieldsName;
+	
 	public MethodVersioningProcessor(LinkedList<VersionSniper> snipers) {
 		this.snipers = snipers;
+		this.fieldsName = new HashMap<CtMethod,String>();
 	}
 
 	public void process(CtClass element) {
 		if (element.isInterface() 
 				|| element.getSignature().toUpperCase().contains("enum".toUpperCase()) //quick fix, need to find which is enum.
 				|| element.isAnonymous() 
-				|| element.hasModifier(ModifierKind.PRIVATE) 
-				|| element.hasModifier(ModifierKind.PROTECTED)
-				|| element.getParent(CtClass.class) != null
-				|| element.getSimpleName().endsWith("Test")) { //possède un parent (donc nestedclass)
+				|| element.getParent(CtClass.class) != null //possède un parent (donc nestedclass)
+				|| element.getSimpleName().endsWith("Test")) {
 			System.out.println(element.getSignature());
 			return;
 		}
@@ -38,7 +39,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 		CtMethod newMethod;
 
 		for(CtMethod<?> method : methods){
-			if(method.getBody() != null && !method.hasModifier(ModifierKind.STATIC)){
+			if ((method.getBody() != null) && (!method.hasModifier(ModifierKind.STATIC))) {
 				newMethodsVersions = new LinkedList<CtMethod>();
 				//List<CtMethod<?>> oldMethods = new ArrayList<CtMethod<?>>();
 				for(VersionSniper sniper : snipers){
@@ -102,12 +103,14 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 
 		CtTypeReference refToInt = getFactory().Code().createCtTypeReference(Integer.class);
 		
+		String fieldName = getFieldName(methodeSource);
+			
 		//create versionField
-		CtField versionField = getFactory().Code().createCtField(methodeSource.getSimpleName()+"_version",refToInt,"0", ModifierKind.PUBLIC, ModifierKind.STATIC);
+		CtField versionField = getFactory().Code().createCtField(fieldName+"_version",refToInt,"0", ModifierKind.PUBLIC, ModifierKind.STATIC);
 		ctClass.addField(versionField);
-		
+		System.out.println(fieldName);
 		//create versionMaxField
-		CtField versionMaxField = getFactory().Code().createCtField(methodeSource.getSimpleName()+"_version_max",refToInt,Integer.toString(methodesDeVersions.size()-1), ModifierKind.PUBLIC, ModifierKind.STATIC);
+		CtField versionMaxField = getFactory().Code().createCtField(fieldName+"_version_max",refToInt,Integer.toString(methodesDeVersions.size()-1), ModifierKind.PUBLIC, ModifierKind.STATIC);
 		ctClass.addField(versionMaxField);
 		
 		// create b1 = block vide de ctmethod
@@ -148,6 +151,11 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 			CtInvocation callFunction = getFactory().Core().createInvocation();
 			//System.out.println(methodVersion);
 			callFunction.setExecutable(methodVersion.getReference());
+			
+			if (methodVersion.hasModifier(ModifierKind.STATIC)) {
+				callFunction.getExecutable().setStatic(true);
+				callFunction.setTarget(null);
+			}
 			//System.out.println(exps.size());
 			callFunction.setArguments(exps);
 			
@@ -174,5 +182,17 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 		
 	}
 	
+	public String getFieldName(CtMethod methode) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(methode.getSimpleName());
+		List<CtParameter> parametres = methode.getParameters();
+		if ((parametres != null) && (!parametres.isEmpty())) {
+			for (CtParameter parametre : parametres) {
+				sb.append("_");
+				sb.append(parametre.getType().toString().replaceAll("[<,>,?, ,.,\\[,\\],\\,]",""));
+			}
+		}
+		return sb.toString();
+	}
 
 }

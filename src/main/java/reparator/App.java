@@ -34,14 +34,15 @@ public class App {
 
 	private static final String targetMainPath = new StringBuilder().append("target").append(File.separator)
 			.append("classes").toString();
-	
+
 	private static final String targetTestPath = new StringBuilder().append("target").append(File.separator)
 			.append("classes").toString();
-	// Quick fix for targetTestPath because in target/test-classes Reflections doesn't work
+	// Quick fix for targetTestPath because in target/test-classes Reflections
+	// doesn't work
 
-	private static String jouvenceFile = "jouvence.bat"; 
+	private static String jouvenceFile = "jouvence.bat";
 	// change it for OS, values : jouvence.bat jouvence.sh jouvence_linux.sh
-	
+
 	private static String jouvenceBranch = "master";
 
 	private static LinkedList<VersionSniper> snipers = new LinkedList<VersionSniper>();
@@ -49,8 +50,10 @@ public class App {
 	private static List<Class<?>> testsClasses = new LinkedList<Class<?>>();
 
 	// example of args:
-	// -nbrCommit 3 -projectPath ressources/demoproject -classPath ...junit-3.8.1.jar -packages demoproject
-	// -nbrCommit 3 -projectPath ressources/jsoup -classPath ... -packages com.jsoup
+	// -nbrCommit 3 -projectPath ressources/demoproject -classPath
+	// ...junit-3.8.1.jar -packages demoproject
+	// -nbrCommit 3 -projectPath ressources/jsoup -classPath ... -packages
+	// com.jsoup
 	public static void main(String[] args) throws Exception {
 
 		// create Options object
@@ -60,7 +63,7 @@ public class App {
 
 		options.addOption("sourceMainPath", true, "Relative source path from folder position (default: src/main/java)");
 		options.addOption("sourceTestPath", true, "Relative source path from folder position (default: src/test/java)");
-		
+
 		options.addOption("classPath", true,
 				" An optional classpath to be passed to the internal Java compiler when building or compiling the input sources.");
 		options.addOption("nbrCommit", true, " Number of commits to use to generate the new project");
@@ -78,11 +81,9 @@ public class App {
 
 			String projectPath = cmd.getOptionValue("projectPath"),
 					sourceMainPath = cmd.getOptionValue("sourceMainPath"),
-					sourceTestPath = cmd.getOptionValue("sourceTestPath"),
-					classPath = cmd.getOptionValue("classPath"),
-					nbrCommit = cmd.getOptionValue("nbrCommit"),
-					packages = cmd.getOptionValue("packages");
-			
+					sourceTestPath = cmd.getOptionValue("sourceTestPath"), classPath = cmd.getOptionValue("classPath"),
+					nbrCommit = cmd.getOptionValue("nbrCommit"), packages = cmd.getOptionValue("packages");
+
 			// Default values of sourceMainPath and sourceTestPath
 			if (sourceMainPath == null) {
 				sourceMainPath = new StringBuilder().append("src").append(File.separator).append("main")
@@ -105,14 +106,12 @@ public class App {
 	public static void downloadVersionsAndRunSpoonTransformations(int nbr, String projectPath, String classPath,
 			String sourceMainPath, String sourceTestPath) {
 
-		System.out.println(new StringBuilder().append("\nnumber of commits = ").append(nbr)
-				.append("\nprojectPath = ").append(projectPath)
-				.append("\nsourceMainPath = ").append(sourceMainPath)
-				.append("\nclassPath = ").append(classPath)
-				.append("\nexecute git to generate ").append(nbr).append(" folders").toString());
+		System.out.println(new StringBuilder().append("\nnumber of commits = ").append(nbr).append("\nprojectPath = ")
+				.append(projectPath).append("\nsourceMainPath = ").append(sourceMainPath).append("\nclassPath = ")
+				.append(classPath).append("\nexecute git to generate ").append(nbr).append(" folders").toString());
 
 		// Download versions
-		CmdTools.executeSH(jouvenceDir, jouvenceFile, projectPath, String.valueOf(nbr), jouvenceBranch);
+		//CmdTools.executeSH(jouvenceDir, jouvenceFile, projectPath, String.valueOf(nbr), jouvenceBranch);
 
 		FunctionsUtils.processCleanFiles(projectPath);
 
@@ -127,22 +126,18 @@ public class App {
 		// Run Spoon transformations
 		Launcher spoon = new Launcher();
 		spoon.addProcessor(new MethodVersioningProcessor(snipers));
-		spoon.run(new String[] { 
-				"-i", new StringBuilder().append(projectPath).append(File.separator).append(sourceMainPath).toString(),
-				"--source-classpath", classPath,
-				"-d", targetMainPath,
-				"--compile"
-		});
+		spoon.run(new String[] { "-i",
+				new StringBuilder().append(projectPath).append(File.separator).append(sourceMainPath).toString(),
+				"--source-classpath", classPath, "-d", targetMainPath, "--compile" });
 		spoon = new Launcher();
-		spoon.run(new String[] { 
-				"-i", new StringBuilder().append(projectPath).append(File.separator).append(sourceTestPath).toString(),
+		spoon.run(new String[] { "-i",
+				new StringBuilder().append(projectPath).append(File.separator).append(sourceTestPath).toString(),
 				"--source-classpath",
 				new StringBuilder().append(classPath).append(File.pathSeparatorChar).append(targetMainPath).toString(),
-				"-d", targetTestPath, 
-				"--compile"
-		});
+				"-d", targetTestPath, "--compile" });
 
-		FunctionsUtils.processResourcesFolders(projectPath, sourceMainPath, sourceTestPath, targetMainPath, targetTestPath);
+		FunctionsUtils.processResourcesFolders(projectPath, sourceMainPath, sourceTestPath, targetMainPath,
+				targetTestPath);
 		FunctionsUtils.putAllPropertiesFilesInTargetFolders(projectPath, sourceMainPath, sourceTestPath, targetMainPath,
 				targetTestPath);
 	}
@@ -153,7 +148,7 @@ public class App {
 		classLoadersList.add(ClasspathHelper.staticClassLoader());
 		String resultat = null;
 		int nbTestsKO = Integer.MAX_VALUE;
-		
+
 		Reflections reflections = new Reflections(new ConfigurationBuilder()
 				.setScanners(new SubTypesScanner(
 						false /* don't exclude Object.class */), new ResourcesScanner())
@@ -183,21 +178,29 @@ public class App {
 		System.out.println(projectClasses.size());
 
 		JUnitCore jUnit = new JUnitCore();
+		jUnit.addListener(new TextListener(new PrintStream(new File("D:/logs.txt"))));
 		Class[] classes = new Class[testsClasses.size()];
 		classes = testsClasses.toArray(classes);
 		Result result = null;
-		Field vfield = null;
 		Field vmaxfield = null;
+		LinkedList<Field> fields_version = new LinkedList<Field>();
+		Field allFields[] = null;
+
 		for (Class<?> c : projectClasses) {
 			System.out.println("MODIF CLASS " + c.getName());
-			for (Method m : c.getDeclaredMethods()) {
+			allFields = c.getDeclaredFields();
+			for (Field field : allFields) {
+				field.setAccessible(true);
+				if (field.getName().endsWith("_version")) {
+					fields_version.add(field);
+				}
+			}
+			for (Field vfield : fields_version) {
 				try {
-					vfield = c.getDeclaredField((m.getName() + "_version"));
-					vmaxfield = c.getDeclaredField(m.getName() + "_version_max");
-					vfield.setAccessible(true);
+					vmaxfield = c.getDeclaredField(vfield.getName() + "_max");
 					vmaxfield.setAccessible(true);
 
-					System.out.println("MODIF METHOD " + m.getName());
+					System.out.println("MODIF METHOD ATTRIBUTE " + vfield.getName());
 					while (((Integer) (vfield.get(Integer.class)))
 							.intValue() <= ((Integer) (vmaxfield.get(Integer.class))).intValue()) {
 
@@ -207,21 +210,21 @@ public class App {
 
 						if (nbTestsKO > result.getFailureCount()) {
 							nbTestsKO = result.getFailureCount();
-							resultat = new StringBuilder().append("Il faut utiliser la méthode ")
-									.append(m.getName()).append(" de la classe ").append(c.getSimpleName())
-									.append(" version ").append(((Integer)(vfield.get(Integer.class))).intValue())
-									.append(". Le nombre d'échecs est de ").append(nbTestsKO)
-									.append(".\nLa méthode est la suivante : \n")
-									.append(m.toString()).toString();
+							resultat = new StringBuilder()
+									.append("Afin d'obtenir le maximum de tests OK il faut que la valeur de l'attribut ")
+									.append(vfield.getName()).append(" soit égale à ")
+									.append(((Integer) (vfield.get(Integer.class))).intValue()).append(" dans la classe ")
+									.append(c.getSimpleName()).append(".\nLe nombre d'échecs est de ").append(nbTestsKO)
+									.append(".\nVous trouverez en premier le nom de la méthode, puis le type des paramètres. Ne pas tenir compte de la dernière valeur qui est 'version'")
+									.toString();
 						}
-						
+
 						vfield.set(Integer.class, new Integer(((Integer) (vfield.get(Integer.class))).intValue() + 1));
 					}
 					vfield.set(Integer.class, new Integer(0));
 				} catch (NoSuchFieldException e) {
 					// ne rien faire
 				}
-
 			}
 		}
 		System.out.println("---- End of program ----");
