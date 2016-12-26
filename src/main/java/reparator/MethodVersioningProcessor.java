@@ -173,7 +173,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 			ctSwitch.addCase(newCase);
 			i++;
 		}
-		//add the last return at the end of method as default. (I don't know how to create default in switch java).
+		//add the last return at the end of method as default
 		if(retur != null){
 			nwMethBody.addStatement(retur);
 		}
