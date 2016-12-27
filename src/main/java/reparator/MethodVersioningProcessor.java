@@ -189,7 +189,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 		if ((parametres != null) && (!parametres.isEmpty())) {
 			for (CtParameter parametre : parametres) {
 				sb.append("_");
-				sb.append(parametre.getType().toString().replaceAll("[<,>,?, ,.,\\[,\\],\\,]",""));
+				sb.append(parametre.getType().toString().replaceAll("[<,>,?, ,.,\\[,\\],\\,]","0"));
 			}
 		}
 		return sb.toString();
