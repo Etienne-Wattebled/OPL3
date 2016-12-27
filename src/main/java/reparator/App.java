@@ -111,7 +111,7 @@ public class App {
 				.append(classPath).append("\nexecute git to generate ").append(nbr).append(" folders").toString());
 
 		// Download versions
-		CmdTools.executeSH(jouvenceDir, jouvenceFile, projectPath, String.valueOf(nbr), jouvenceBranch);
+		//CmdTools.executeSH(jouvenceDir, jouvenceFile, projectPath, String.valueOf(nbr), jouvenceBranch);
 
 		FunctionsUtils.processCleanFiles(projectPath);
 
@@ -215,7 +215,7 @@ public class App {
 									.append(vfield.getName()).append(" soit égale à ")
 									.append(((Integer) (vfield.get(Integer.class))).intValue()).append(" dans la classe ")
 									.append(c.getSimpleName()).append(".\nLe nombre d'échecs est de ").append(nbTestsKO)
-									.append(".\nVous trouverez en premier le nom de la méthode, puis le type des paramètres. Ne pas tenir compte de la dernière valeur qui est 'version'")
+									.append(".\nVous trouverez en premier le nom de la méthode, puis le type des paramètres. Ne pas tenir compte de la dernière valeur qui est 'version'.\nLe caractère 0 peut être l'un des caractères suivants [ ] , . < > ? ou un espace.")
 									.toString();
 						}
 
