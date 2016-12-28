@@ -19,6 +19,10 @@ public class DownloadVersionsTest {
 	private File demoproject_1 = new File(demoproject.getPath() + "_1");
 	private File demoproject_2 = new File(demoproject.getPath() + "_2");
 	
+	private int demoproject_0_size = 28890;
+	private int demoproject_1_size = 28742;
+	private int demoproject_2_size = 28463;
+	
 	@After
 	public void removeAll() throws Exception {
 		FileUtils.deleteDirectory(demoproject_0);
@@ -31,9 +35,9 @@ public class DownloadVersionsTest {
 		CmdTools.executeSH(App.jouvenceDir, App.jouvenceFile, demoproject.toString(), "2",
 				App.jouvenceBranch);
 		assertTrue(demoproject_0.exists());
-		assertEquals(FileUtils.sizeOfDirectory(demoproject_0),28890);
+		assertEquals(FileUtils.sizeOfDirectory(demoproject_0),demoproject_0_size);
 		assertTrue(demoproject_1.exists());
-		assertEquals(FileUtils.sizeOfDirectory(demoproject_1),28742);
+		assertEquals(FileUtils.sizeOfDirectory(demoproject_1),demoproject_1_size);
 		assertFalse(demoproject_2.exists()); // NO
 	}
 
@@ -42,10 +46,10 @@ public class DownloadVersionsTest {
 		CmdTools.executeSH(App.jouvenceDir, App.jouvenceFile, demoproject.toString(), "3",
 				App.jouvenceBranch);
 		assertTrue(demoproject_0.exists());
-		assertEquals(FileUtils.sizeOfDirectory(demoproject_0),28890);
+		assertEquals(FileUtils.sizeOfDirectory(demoproject_0),demoproject_0_size);
 		assertTrue(demoproject_1.exists());
-		assertEquals(FileUtils.sizeOfDirectory(demoproject_1),28742);
+		assertEquals(FileUtils.sizeOfDirectory(demoproject_1),demoproject_1_size);
 		assertTrue(demoproject_2.exists());
-		assertEquals(FileUtils.sizeOfDirectory(demoproject_2),28463);
+		assertEquals(FileUtils.sizeOfDirectory(demoproject_2),demoproject_2_size);
 	}
 }
