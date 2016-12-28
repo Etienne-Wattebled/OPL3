@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class App {
 
-	private static final String jouvenceDir = "ressources";
+	private static final String jouvenceDir = "resources";
 
 	private static final String targetMainPath = new StringBuilder().append("target").append(File.separator)
 			.append("classes").toString();
