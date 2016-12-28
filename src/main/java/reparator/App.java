@@ -5,7 +5,6 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.reflections.Reflections;
@@ -18,32 +17,29 @@ import com.martiansoftware.jsap.ParseException;
 
 import spoon.Launcher;
 import util.CmdTools;
+import util.Constants;
 import util.FunctionsUtils;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 public class App {
 
-	private static final String jouvenceDir = "resources";
+	public static final String jouvenceDir = "resources";
 
-	private static final String targetMainPath = new StringBuilder().append("target").append(File.separator)
-			.append("classes").toString();
+	private static final String targetMainPath = Constants.targetMainPath;
 
-	private static final String targetTestPath = new StringBuilder().append("target").append(File.separator)
-			.append("classes").toString();
+	private static final String targetTestPath = Constants.targetMainPath;
 	// Quick fix for targetTestPath because in target/test-classes Reflections
 	// doesn't work
 
-	private static String jouvenceFile = "jouvence.bat";
+	public static String jouvenceFile = "jouvence.bat";
 	// change it for OS, values : jouvence.bat jouvence.sh jouvence_linux.sh
 
-	private static String jouvenceBranch = "master";
+	public static String jouvenceBranch = "master";
 
 	private static LinkedList<VersionSniper> snipers = new LinkedList<VersionSniper>();
 	private static List<Class<?>> projectClasses = new LinkedList<Class<?>>();
@@ -86,12 +82,10 @@ public class App {
 
 			// Default values of sourceMainPath and sourceTestPath
 			if (sourceMainPath == null) {
-				sourceMainPath = new StringBuilder().append("src").append(File.separator).append("main")
-						.append(File.separator).append("java").toString();
+				sourceMainPath = Constants.srcMainJava;
 			}
 			if (sourceTestPath == null) {
-				sourceTestPath = new StringBuilder().append("src").append(File.separator).append("test")
-						.append(File.separator).append("java").toString();
+				sourceTestPath = Constants.srcTestJava;
 			}
 
 			downloadVersionsAndRunSpoonTransformations(Integer.parseInt(nbrCommit), projectPath, classPath,
