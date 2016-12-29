@@ -35,9 +35,9 @@ public class DownloadVersionsTest {
 		CmdTools.executeSH(App.jouvenceDir, App.jouvenceFile, demoproject.toString(), "2",
 				App.jouvenceBranch);
 		assertTrue(demoproject_0.exists());
-		assertEquals(FileUtils.sizeOfDirectory(demoproject_0),demoproject_0_size);
+		assertEquals(demoproject_0_size,FileUtils.sizeOfDirectory(demoproject_0));
 		assertTrue(demoproject_1.exists());
-		assertEquals(FileUtils.sizeOfDirectory(demoproject_1),demoproject_1_size);
+		assertEquals(demoproject_1_size,FileUtils.sizeOfDirectory(demoproject_1));
 		assertFalse(demoproject_2.exists()); // NO
 	}
 
@@ -46,10 +46,10 @@ public class DownloadVersionsTest {
 		CmdTools.executeSH(App.jouvenceDir, App.jouvenceFile, demoproject.toString(), "3",
 				App.jouvenceBranch);
 		assertTrue(demoproject_0.exists());
-		assertEquals(FileUtils.sizeOfDirectory(demoproject_0),demoproject_0_size);
+		assertEquals(demoproject_0_size,FileUtils.sizeOfDirectory(demoproject_0));
 		assertTrue(demoproject_1.exists());
-		assertEquals(FileUtils.sizeOfDirectory(demoproject_1),demoproject_1_size);
+		assertEquals(demoproject_1_size,FileUtils.sizeOfDirectory(demoproject_1));
 		assertTrue(demoproject_2.exists());
-		assertEquals(FileUtils.sizeOfDirectory(demoproject_2),demoproject_2_size);
+		assertEquals(demoproject_2_size,FileUtils.sizeOfDirectory(demoproject_2));
 	}
 }
