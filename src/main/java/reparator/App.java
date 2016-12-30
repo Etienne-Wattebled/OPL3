@@ -105,7 +105,7 @@ public class App {
 				.append(classPath).append("\nexecute git to generate ").append(nbr).append(" folders").toString());
 
 		// Download versions
-		//CmdTools.executeSH(jouvenceDir, jouvenceFile, projectPath, String.valueOf(nbr), jouvenceBranch);
+		CmdTools.executeSH(jouvenceDir, jouvenceFile, projectPath, String.valueOf(nbr), jouvenceBranch);
 
 		FunctionsUtils.processCleanFiles(projectPath);
 
