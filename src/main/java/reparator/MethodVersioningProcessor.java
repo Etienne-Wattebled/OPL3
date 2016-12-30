@@ -20,7 +20,7 @@ public class MethodVersioningProcessor extends AbstractProcessor<CtClass> {
 	List<VersionSniper> snipers;
 	HashMap<CtMethod,String> fieldsName;
 	
-	public MethodVersioningProcessor(LinkedList<VersionSniper> snipers) {
+	public MethodVersioningProcessor(List<VersionSniper> snipers) {
 		this.snipers = snipers;
 		this.fieldsName = new HashMap<CtMethod,String>();
 	}

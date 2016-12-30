@@ -30,12 +30,18 @@ public class VersionSniper {
         
 		System.out.println("spoon sources "+pathToSource);
 		System.out.println("with classPath = "+classPath);
-		
-        spoon.run(new String[]{
-        		"-i",pathToSource,
-        		"--source-classpath",classPath,
-        		"--output-type","nooutput"
-        });
+		if ((classPath == null) || (classPath.isEmpty())) {
+	        spoon.run(new String[]{
+	        		"-i",pathToSource,
+	        		"--output-type","nooutput"
+	        });
+		} else {
+			spoon.run(new String[]{
+		        		"-i",pathToSource,
+		        		"--source-classpath",classPath,
+		        		"--output-type","nooutput"
+		     });
+		}
     }
 
     public int getId(){
